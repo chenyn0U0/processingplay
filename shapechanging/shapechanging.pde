@@ -14,7 +14,7 @@ boolean fullscreen=true;
  
 float zm = 1200;
 float distancetocenter=400;
-float[] move={0,50,0};
+float[] move={0,0,0};
 
 float a=1;
 float b=0.3;
@@ -22,7 +22,7 @@ float b=0.3;
 IsoSkeleton skeleton;
 IsoSkeleton skeletonup;
 IsoSkeleton skeletonleft;
-//IsoSkeleton skeletonback;
+IsoSkeleton skeletonback;
 IsoSkeleton skeletonright;
 
     
@@ -39,7 +39,7 @@ void setup() {
   right=shape.getright(distancetocenter);
   left=shape.getleft(distancetocenter);
   up=shape.getup(distancetocenter);
-//  back=shape.getback(distancetocenter);
+  back=shape.getback(distancetocenter);
   
   right.move(move);
   left.move(move);
@@ -65,13 +65,13 @@ void draw(){
   skeleton= new IsoSkeleton(this);
   skeletonup= new IsoSkeleton(this);
   skeletonleft= new IsoSkeleton(this);
-//  skeletonback= new IsoSkeleton(this);
+  skeletonback= new IsoSkeleton(this);
   skeletonright= new IsoSkeleton(this);
 //  shape.drawskeleton(skeleton,a,b);
   shape.thisrotate(1*PI/180);
   up.drawskeleton(skeletonup,a,b);
   left.drawskeleton(skeletonleft,a,b);
-//  back.drawskeleton(skeletonback,a,b);
+  back.drawskeleton(skeletonback,a,b);
   right.drawskeleton(skeletonright,a,b);//number1:0-5;number2:0-0.5
   update(distancetocenter, move);
 }
@@ -102,10 +102,10 @@ void  update(float distancetocenter, float[] move){
   right=shape.getright(distancetocenter);
   left=shape.getleft(distancetocenter);
   up=shape.getup(distancetocenter);
-//  back=shape.getback(distancetocenter);
+  back=shape.getback(distancetocenter);
 
   right.move(move);
   left.move(move);
   up.move(move);
-//  back.move(move);
+  back.move(move);
 }
