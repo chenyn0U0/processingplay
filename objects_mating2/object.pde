@@ -3,7 +3,6 @@ class Object{
   ArrayList<Point> p;
   IsoSkeleton skeleton;
   ArrayList<Float> fitparents;
-  float animation;
   
   float lifelength;
   float minX,maxX,minY,maxY,minZ,maxZ;
@@ -11,7 +10,6 @@ class Object{
   float parenttemp;
   //+++++++++++++++read from objtxt++++++++++++++++
   Object(String filename,float temp){
-    animation=0;
     p=new ArrayList<Point>();
     try{
       boolean pointsinitialize=false;
@@ -46,7 +44,6 @@ class Object{
   //++++++++++++++++++++++++++++++++++++++++++++
   //++++++++++++++born with parents++++++++++++++++++
   Object(Object o1,Object o2){
-    animation=100;
     float[] minmaxxyz=new float[6];
     if(o1.minX<o2.minX) minmaxxyz[0]=o1.minX;
     else minmaxxyz[0]=o2.minX;
@@ -200,8 +197,8 @@ class Object{
     }
   }
   
-  void buildskeleton(float x,float y,float z){
-    skeleton=new IsoSkeleton(p);
+  void buildskeleton(float[] move,Object previewso,boolean animateornot){
+    skeleton=new IsoSkeleton(this,move,previewso,animateornot);
   }
   
   void drawthis(float a,float b){
@@ -234,30 +231,7 @@ class Object{
 //    return totaldist;
   }
   
-  ArrayList[][][] putongrid(Object o,int[] mategrid,float[] minmaxxyz){
-    ArrayList<Point>[][][] pointgrid=new ArrayList[mategrid[0]][mategrid[1]][mategrid[2]];
-    float intvx=(minmaxxyz[1]-minmaxxyz[0])/mategrid[0];
-    float intvy=(minmaxxyz[3]-minmaxxyz[2])/mategrid[1];
-    float intvz=(minmaxxyz[5]-minmaxxyz[4])/mategrid[2];
-    for(int x=0;x<mategrid[0];x++){
-      for(int y=0;y<mategrid[1];y++){
-        for(int z=0;z<mategrid[2];z++){
-          pointgrid[x][y][z]=new ArrayList<Point>();
-        }
-      }
-    }
-    
-    for(int i=0;i<o.p.size();i++){
-      int x=parseInt((o.p.get(i).getX()-minmaxxyz[0])/intvx);
-      int y=parseInt((o.p.get(i).getY()-minmaxxyz[2])/intvy);
-      int z=parseInt((o.p.get(i).getZ()-minmaxxyz[4])/intvz);
-      if(x==mategrid[0]) x--;
-      if(y==mategrid[1]) y--;
-      if(z==mategrid[2]) z--;
-      pointgrid[x][y][z].add(o.p.get(i));
-    }
-    return pointgrid;
-  }
+
   
   void setfitness(ArrayList<Object> parents){
     fitparents=new ArrayList<Float>();
@@ -277,8 +251,8 @@ class Object{
   
   
   boolean minuslife(ArrayList<Float> fit){
-//    float minus=getlifeminusvalue(fit);
-//    lifelength-=percentagelife*minus;
+    float minus=getlifeminusvalue(fit);
+    lifelength-=percentagelife*minus;
     if(lifelength<=0) return true;
     else return false;    
   }
@@ -303,6 +277,25 @@ class Point{
     c=new PVector(x,y,z);
   }
   
+  Point(PVector pc){
+    c=pc;
+  }
+  
+  Point(PVector pc,ArrayList<Integer> thecp){
+    c=pc;
+    cp=thecp;
+  }
+  
+  Point(PVector pc,ArrayList<Integer> cp1,ArrayList<Integer> cp2){
+    c=pc;
+    for(int i=0;i<cp1.size();i++){
+      cp.add(cp1.get(i));
+    }
+    for(int i=0;i<cp2.size();i++){
+      cp.add(cp2.get(i));
+    }
+  }
+  
   Point(int theid,int lastshapenum,Point p){
     id=theid;
     c=p.c;
@@ -310,9 +303,17 @@ class Point{
     lastshapeid=p.id;
   }
   
+  void setcp(ArrayList<Integer> cp1,ArrayList<Integer> cp2){
+    for(int i=0;i<cp1.size();i++){
+      cp.add(cp1.get(i));
+    }
+    for(int i=0;i<cp2.size();i++){
+      cp.add(cp2.get(i));
+    }
+  }
   
   void printthis(){
-    println(id,c,lastshape,lastshapeid);
+    println(id,c,lastshape,lastshapeid,cp);
   }
   
   float getdist(Point p){
@@ -371,10 +372,56 @@ class Point{
       p.cp.add(this.id);
     }
   }
-  
-  
 
 }
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ArrayList[][][] putongrid(Object o,int[] mategrid,float[] minmaxxyz){
+    ArrayList<Point>[][][] pointgrid=new ArrayList[mategrid[0]][mategrid[1]][mategrid[2]];
+    float intvx=(minmaxxyz[1]-minmaxxyz[0])/mategrid[0];
+    float intvy=(minmaxxyz[3]-minmaxxyz[2])/mategrid[1];
+    float intvz=(minmaxxyz[5]-minmaxxyz[4])/mategrid[2];
+    for(int x=0;x<mategrid[0];x++){
+      for(int y=0;y<mategrid[1];y++){
+        for(int z=0;z<mategrid[2];z++){
+          pointgrid[x][y][z]=new ArrayList<Point>();
+        }
+      }
+    }
+    
+    for(int i=0;i<o.p.size();i++){
+      int x=parseInt((o.p.get(i).getX()-minmaxxyz[0])/intvx);
+      int y=parseInt((o.p.get(i).getY()-minmaxxyz[2])/intvy);
+      int z=parseInt((o.p.get(i).getZ()-minmaxxyz[4])/intvz);
+      if(x==mategrid[0]) x--;
+      if(y==mategrid[1]) y--;
+      if(z==mategrid[2]) z--;
+      pointgrid[x][y][z].add(o.p.get(i));
+    }
+    return pointgrid;
+  }

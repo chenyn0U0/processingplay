@@ -3,6 +3,10 @@
 //  return newske;
 //}
 
+boolean sketchFullScreen() {
+  return fullscreen;
+}
+
 void minuslife(ArrayList<Object> population,ArrayList<Float> fitparents){
   for(int i=0;i<population.size();i++){
     if(population.get(i).minuslife(fitparents)) population.remove(i);
@@ -91,6 +95,9 @@ int[] getnewparents(ArrayList<Float> fitparents,ArrayList<Object> population,Str
     if(max>population.size()-1) max=population.size()-1;
     result[0]=idnum.get(parseInt(random(0,max+0.99)));
     result[1]=idnum.get(parseInt(random(0,max+0.99)));
+    while(result[0]==result[1]){
+      result[1]=idnum.get(parseInt(random(0,max+0.99)));
+    }
   }
   return result;
 }
@@ -98,7 +105,47 @@ int[] getnewparents(ArrayList<Float> fitparents,ArrayList<Object> population,Str
 
 
 
+void showtemperature(){
+  
+  if(showwhich[3]==1){
+    pushMatrix();
+    translate(move[0],move[1],move[2]);
+    fill(255);
+    textSize(50);
+    text("NOW TEMPERATURE: "+temperature,-310,textposition,0);
+    popMatrix();
+  }
+  
+  if(showwhich[2]==1){
+    pushMatrix();
+    translate(move[0],move[1],move[2]);
+    rotateZ(-PI/2);
+    fill(255);
+    textSize(50);
+    text("NOW TEMPERATURE: "+temperature,-310,textposition,0);
+    popMatrix();
+  }
+  if(showwhich[1]==1){
+    pushMatrix();
+    translate(move[0],move[1],move[2]);
+    rotateZ(PI/2);
+    fill(255);
+    textSize(50);
+    text("NOW TEMPERATURE: "+temperature,-310,textposition,0);
+    popMatrix();
+  }
+  if(showwhich[0]==1){
+    pushMatrix();
+    translate(move[0],move[1],move[2]);
+    rotateZ(PI);
+    fill(255);
+    textSize(50);
+    text("NOW TEMPERATURE: "+temperature,-310,textposition,0);
+    popMatrix();
+  }
 
+  
+}
 
 
 

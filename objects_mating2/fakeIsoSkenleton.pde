@@ -1,24 +1,107 @@
 class IsoSkeleton{
   ArrayList<Point> p;
   
-  IsoSkeleton(ArrayList<Point> inputp){
-    p=inputp;
+  ArrayList<Point> pt;
+  ArrayList<Point> pl;
+  ArrayList<Point> pr;
+  ArrayList<Point> pb;
+  
+  float animation;
+  ArrayList<animationrule> animationrules;
+  
+  
+  
+  IsoSkeleton(Object nowo,float[] move,Object beforeo,boolean animateornot){
+    p=nowo.p;
+    getfourp();
+    
+//    if(animateornot) {
+//      animation=100;
+//      buildanimationrules(nowo,beforeo);
+//    }
+//    else animation=0;
+    
+    
   }
 
   void plot(float a,float b){
-    for(int i=0;i<p.size();i++){
-      for(int j=0;j<p.get(i).cp.size();j++){
-        if(p.get(i).cp.get(j)>i){
-          PVector p1=p.get(i).getmovedpoint(0,0,0);
-          PVector p2=p.get(p.get(i).cp.get(j)).getmovedpoint(0,0,0);
-          stroke(150,150,0);
-          drawline(p1,p2,a*10);
-        }
-      }
+    if(rotatespeed!=0)  rotateall();
+    if(showwhich[0]==1)
+    drawshape(a,b,pt);
+    if(showwhich[1]==1)
+    drawshape(a,b,pl);
+    if(showwhich[2]==1)
+    drawshape(a,b,pr);
+    if(showwhich[3]==1)
+    drawshape(a,b,pb);
+    
+    if(createobj){ 
+      createobj=false;
+      createobj(a,b,p); 
     }
   }
   
+  void getfourp(){
+    if(showwhich[0]==1)
+      pt=copyp(p,0,PI,0,-distancetocenter,0,move);
+    if(showwhich[1]==1)
+      pl=copyp(p,PI/2,PI/2,-distancetocenter,0,0,move);
+    if(showwhich[2]==1)
+      pr=copyp(p,-PI/2,-PI/2,distancetocenter,0,0,move);
+    if(showwhich[3]==1)
+      pb=copyp(p,PI,0,0,distancetocenter,0,move);
+  }
   
+  void rotateall(){
+  for(int i=0;i<p.size();i++){
+      p.get(i).c=rotY(p.get(i).c,rotatespeed);
+    }
+  getfourp();
+  }
+  
+}
+
+
+
+ArrayList<Point> copyp(ArrayList<Point> p,float rotatey,float rotatez,float movex,float movey,float movez,float[] allmove){
+    ArrayList<Point> result=new ArrayList<Point>();
+    float[] translate={allmove[0]+movex,allmove[1]+movey,allmove[2]+movez};
+    for(int i=0;i<p.size();i++){
+      PVector c=getplus(rotZ(rotY(p.get(i).c,rotatey),rotatez),translate);
+      result.add(new Point(c,p.get(i).cp));
+    }
+    return result;
+}
+
+
+PVector rotZ(PVector point,float angle){
+  PVector result=new PVector(((point.x*cos(angle))-(point.y*sin(angle)) ),((point.x*sin(angle))+(point.y*cos(angle))),point.z);
+  return result;
+}
+
+PVector rotY(PVector point,float angle){  
+  PVector result=new PVector(((point.x*cos(angle))-(point.z*sin(angle) )),point.y,((point.x*sin(angle))+(point.z*cos(angle))));
+  return result;
+}
+
+PVector getplus(PVector point,float[] move){
+  PVector result=new PVector(point.x+move[0],point.y+move[1],point.z+move[2]);
+  return result;
+}
+
+
+
+void drawshape(float a,float b,ArrayList<Point> p){
+  for(int i=0;i<p.size();i++){
+    for(int j=0;j<p.get(i).cp.size();j++){
+      if(p.get(i).cp.get(j)>i){
+        PVector p1=p.get(i).getmovedpoint(0,0,0);
+        PVector p2=p.get(p.get(i).cp.get(j)).getmovedpoint(0,0,0);
+        stroke(strokecolor);
+        drawline(p1,p2,a*10);
+      }
+    }
+  }
 }
 
 void drawline(PVector pa,PVector pb,float weight){
@@ -31,6 +114,10 @@ void drawline(PVector pa,PVector pb,float weight){
 //  drawcube(pa,weight);
 //  drawcube(pb,weight);
 }
+
+
+
+
 
 void drawX(PVector pa,PVector pb,float weight){
   PVector[][] pair=new PVector[4][2];
